@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="/signup.css"> 
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome Back</h1>
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Log In</button>
+    </form>
+    <p class="login-link">New user? <a href="signup.html">Sign up</a></p>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = 'Logging in...';
+      
+      try {
+        console.log("Attempting login..."); // Debug
+        const response = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            email: document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value
+          })
+        });
+
+        console.log("Response status:", response.status); // Debug
+        const result = await response.json();
+        console.log("Full response:", result); // Debug
+        
+        if (response.ok) {
+          
+         
+          
+          
+          localStorage.setItem('user', JSON.stringify(result.user));
+          console.log("Login successful, redirecting..."); // Debug
+          window.location.href = 'trips.html'; // Changed to your trips page
+        } else {
+          throw new Error(result.message || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login error:", error); // Detailed error
+        alert(`Error: ${error.message}\nCheck console for details.`);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Log In';
+      }
+    });
+  </script>
+</body>
+</html>

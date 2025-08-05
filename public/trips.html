@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌍 My Trips</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #f94144;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+    .loading-spinner {
+      border: 4px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+      border-top: 4px solid #4361ee;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      text-align: center;
+      padding: 20px;
+      color: #f94144;
+    }
+
+    .error-message button {
+      background: #4361ee;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      grid-column: 1/-1;
+    }
+
+    .empty-state .btn {
+      background: #4361ee;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background: #f5f7fa;
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    
+    .create-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .create-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+    }
+    
+    .controls {
+      margin-bottom: 30px;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-select, .search-box input {
+      padding: 10px 15px;
+      border-radius: 50px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+    }
+    
+    .search-box {
+      flex-grow: 1;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding-left: 40px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 15px center;
+    }
+    
+    .trip-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .trip-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .trip-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .trip-title h2 {
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+    }
+    
+    .destination {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .status-bubble {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .status-bubble.wishlist {
+      background: #fff3bf;
+      color: #f08c00;
+    }
+    
+    .status-bubble.upcoming {
+      background: #d3f9d8;
+      color: #2b8a3e;
+    }
+    
+    .status-bubble.completed {
+      background: #e9ecef;
+      color: #495057;
+    }
+    
+    .card-dates {
+      display: flex;
+      justify-content: space-between;
+      color: #666;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    
+    .card-progress {
+      margin-bottom: 20px;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: #e9ecef;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+    
+    .budget-status {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+    
+    .budget-status.under {
+      background: #ebfbee;
+      color: #2b8a3e;
+    }
+    
+    .budget-status.over {
+      background: #fff5f5;
+      color: #c92a2a;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .card-actions button {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-view {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-delete {
+      background: #fff5f5;
+      color: var(--danger);
+      max-width: 40px;
+    }
+    
+    .loading-spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary);
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 50px auto;
+      grid-column: 1 / -1;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .trip-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .filters {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>✨ My Travel Journal</h1>
+      <a href="creat_trip.html" class="create-btn">+ New Trip</a>
+    </header>
+    
+    <div class="controls">
+      <div class="filters">
+        <select id="statusFilter" class="filter-select">
+          <option value="all">All Trips</option>
+          <option value="wishlist">Wishlist</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="completed">Completed</option>
+        </select>
+        <div class="search-box">
+          <input type="text" id="searchBox" placeholder="Search trips...">
+        </div>
+      </div>
+    </div>
+    
+    <div class="trip-cards" id="tripsContainer">
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+
+<script>
+  // Helper functions
+  function showLoading() {
+    document.getElementById('tripsContainer').innerHTML = `
+      <div class="loading-spinner"></div>
+      <p>Loading your trips...</p>
+    `;
+  }
+
+  function showError(message) {
+    document.getElementById('tripsContainer').innerHTML = `
+      <div class="error-message">
+        <p>${message}</p>
+        <button onclick="loadTrips()">Retry</button>
+      </div>
+    `;
+  }
+
+  async function loadTrips() {
+    showLoading();
+    
+    try {
+      // 1. Get user from localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user?.id) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // 2. Fetch trips from backend
+      const response = await fetch(`http://localhost:3000/api/trips?userId=${user.id}`);
+      
+      // 3. Handle response
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch trips');
+      }
+
+      const trips = await response.json();
+      displayTrips(trips);
+      
+    } catch (error) {
+      console.error('Error loading trips:', error);
+      showError(error.message || 'Failed to load trips. Please try again.');
+    }
+  }
+
+  function displayTrips(trips) {
+    const container = document.getElementById('tripsContainer');
+    container.innerHTML = '';
+
+    if (!trips || trips.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <p>No trips found. Create your first trip!</p>
+          <a href="creat_trip.html" class="btn">Create Trip</a>
+        </div>
+      `;
+      return;
+    }
+
+    trips.forEach(trip => {
+      const card = document.createElement('div');
+      card.className = `trip-card ${trip.status}`;
+      card.innerHTML = `
+        <!-- Your card HTML here -->
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // Initialize when page loads
+  document.addEventListener('DOMContentLoaded', loadTrips);
+</script>
+</body>
+</html>

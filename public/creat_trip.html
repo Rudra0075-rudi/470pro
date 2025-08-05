@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌍 Create New Trip</title>
+  <link rel="stylesheet" href="/signup.css">
+  <style>
+    /* Additional styles specific to trip creation */
+    .date-fields {
+      display: flex;
+      gap: 10px;
+    }
+    .date-fields input {
+      flex: 1;
+    }
+    .status-options {
+      display: flex;
+      gap: 15px;
+      margin: 15px 0;
+    }
+    .status-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .packing-list {
+      margin-top: 15px;
+    }
+    .packing-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .add-item-btn {
+      width: auto;
+      padding: 8px 15px;
+      margin-top: 5px;
+    }
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: #f2f2f2;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      resize: vertical;
+      min-height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✨ Plan New Trip</h1>
+    <form id="tripForm">
+      <input type="text" id="title" placeholder="Trip Title (e.g., Japan Adventure)" required>
+      <input type="text" id="destination" placeholder="Destination" required>
+      
+      <div class="date-fields">
+        <input type="date" id="startDate" required>
+        <input type="date" id="endDate" required>
+      </div>
+      
+      <div class="status-options">
+        <label class="status-option">Wishlist
+          <input type="radio" name="status" value="wishlist" checked>
+          
+        </label>
+        <label class="status-option">Upcoming
+          <input type="radio" name="status" value="upcoming">
+          
+        </label>
+        <label class="status-option">Completed
+          <input type="radio" name="status" value="completed">
+          
+        </label>
+      </div>
+      
+      <div class="budget-fields">
+        <input type="number" id="totalBudget" placeholder="Total Budget ($)">
+        <input type="number" id="spentBudget" placeholder="Amount Spent ($)">
+      </div>
+      
+      <div class="packing-list">
+        <h3>🎒 Packing List</h3>
+        <div id="packingItemsContainer">
+          <div class="packing-item">
+            <input type="text" class="packing-item-input" placeholder="Item name">
+            <input type="checkbox" class="packed-checkbox">
+          </div>
+        </div>
+        <button type="button" class="add-item-btn" id="addPackingItem">+ Add Item</button>
+      </div>
+      
+      <textarea id="notes" placeholder="Additional notes..."></textarea>
+      
+      <button type="submit">Save Trip</button>
+    </form>
+  </div>
+
+<script>
+  document.getElementById('addPackingItem').addEventListener('click', () => {
+    const container = document.getElementById('packingItemsContainer');
+    const newItem = document.createElement('div');
+    newItem.className = 'packing-item';
+    newItem.innerHTML = `
+      <input type="text" class="packing-item-input" placeholder="Item name">
+      <label>
+        <input type="checkbox" class="packed-checkbox">
+        Packed
+      </label>
+    `;
+    container.appendChild(newItem);
+  });
+
+  document.getElementById('tripForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // 1. Get form data
+    const tripData = {
+      title: document.getElementById('title').value.trim(),
+      destination: document.getElementById('destination').value.trim(),
+      startDate: document.getElementById('startDate').value,
+      endDate: document.getElementById('endDate').value,
+      status: document.querySelector('input[name="status"]:checked').value,
+      packingList: getPackingItems(),
+      budget: {
+        total: parseFloat(document.getElementById('totalBudget').value) || 0,
+        spent: parseFloat(document.getElementById('spentBudget').value) || 0
+      },
+      notes: document.getElementById('notes').value.trim(),
+      userId:user.id
+
+    };
+
+    // 2. Basic validation
+    if (!tripData.userId) {
+      alert('Please login first');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    if (!tripData.title || !tripData.destination || !tripData.startDate || !tripData.endDate) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    try {
+    
+    
+     
+      // 4. Send to backend
+      const response = await fetch('http://localhost:3000/api/trips', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          
+        },
+        body: JSON.stringify(tripData)
+      });
+
+      // 5. Handle response
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to save trip');
+      }
+      
+      alert('Trip saved successfully!');
+      window.location.href = 'trips.html';
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert(`Error: ${error.message}`);
+    }
+  });
+
+  // Helper function to get packing items
+  function getPackingItems() {
+    const items = [];
+    document.querySelectorAll('.packing-item').forEach(item => {
+      const input = item.querySelector('.packing-item-input');
+      const checkbox = item.querySelector('.packed-checkbox');
+      if (input.value.trim()) {
+        items.push({
+          item: input.value.trim(),
+          packed: checkbox.checked
+        });
+      }
+    });
+    return items;
+  }
+</script>
+</body>
+</html>

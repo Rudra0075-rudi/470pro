@@ -1,0 +1,25 @@
+/* Add to existing signup.css */
+.budget-fields {
+  display: flex;
+  gap: 10px;
+}
+.budget-fields input {
+  flex: 1;
+}
+
+input[type="date"] {
+  padding: 11px 12px; /* Match other input fields */
+  font-family: 'Poppins', sans-serif;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #7873f5;
+}
+
+h3 {
+  margin: 15px 0 5px 0;
+  color: #333;
+  font-size: 18px;
+}

@@ -1,0 +1,42 @@
+/* Add to existing trip.css */
+
+/* Status-specific colors */
+.trip-card.wishlist {
+  border-color: #f39c12; /* Orange */
+}
+.trip-card.wishlist .status-bubble {
+  background: #fdebd0;
+  color: #e67e22;
+}
+
+/* Card animations */
+.trip-card {
+  transition: all 0.3s ease;
+}
+.trip-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .trip-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Budget bubble colors */
+.budget-bubble.over {
+  background: #fadbd8;
+  color: #e74c3c;
+}
+.budget-bubble.under {
+  background: #d5f5e3;
+  color: #27ae60;
+}
+
+/* Packing list emojis */
+.packing-progress p::before {
+  content: "🎒";
+  margin-right: 5px;
+}
