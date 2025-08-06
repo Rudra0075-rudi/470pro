@@ -1,44 +1,53 @@
+
 const express = require('express');
 const Trip = require('../models/trip');
 const router = express.Router();
 
-// Get trips with error handling
+// POST endpoint for creating trips
+router.post('/', async (req, res) => {
+  try {
+    // Validate required fields
+    if (!req.body.title || !req.body.destination || !req.body.startDate || !req.body.endDate || !req.body.userId) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Create new trip
+    const trip = new Trip({
+      title: req.body.title,
+      destination: req.body.destination,
+      startDate: new Date(req.body.startDate),
+      endDate: new Date(req.body.endDate),
+      status: req.body.status || 'upcoming',
+      packingList: req.body.packingList || [],
+      budget: req.body.budget || { total: 0, spent: 0 },
+      notes: req.body.notes || '',
+      userId: req.body.userId
+    });
+
+    // Save to database
+    await trip.save();
+    
+    // Return created trip
+    res.status(201).json(trip);
+    
+  } catch (error) {
+    console.error("Error creating trip:", error);
+    res.status(500).json({ 
+      error: "Failed to create trip",
+      details: error.message 
+    });
+  }
+});
+// GET trips for a user
 router.get('/', async (req, res) => {
-  try {
-    if (!req.query.userId) {
-      return res.status(400).json({ error: "User ID is required" });
+    try {
+        const trips = await Trip.find({ userId: req.query.userId });
+        res.json(trips);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-
-    const trips = await Trip.find({ userId: req.query.userId })
-      .sort({ startDate: 1 }) // Sort by start date
-      .lean(); // Return plain JS objects
-
-    res.json(trips);
-  } catch (error) {
-    console.error("Error fetching trips:", error);
-    res.status(500).json({ 
-      error: "Server error",
-      details: error.message 
-    });
-  }
 });
 
-// Delete trip endpoint
-router.delete('/:id', async (req, res) => {
-  try {
-    const deletedTrip = await Trip.findByIdAndDelete(req.params.id);
-    
-    if (!deletedTrip) {
-      return res.status(404).json({ error: "Trip not found" });
-    }
-    
-    res.json({ message: "Trip deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ 
-      error: "Failed to delete trip",
-      details: error.message 
-    });
-  }
-});
+
 
 module.exports = router;

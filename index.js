@@ -8,12 +8,16 @@ require('dotenv').config();
 
 
 const PORT = 3000;
-
+app.use(cors({
+  origin: ['http://localhost:5500', 'http://127.0.0.1:5500'], // Add your client origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 // Middleware
 app.use(express.json());
 app.use(express.static('public'));
  
-app.use(cors());
+
 
 // Connect to DB
 connectDB();
