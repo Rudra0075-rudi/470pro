@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌍 Travel Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-globe"></i> Micro Travel </h2>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item active">
+          <a href="#" onclick="showSection('overview')">
+            <i class="fas fa-chart-line"></i>
+            <span>Overview</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="showSection('trips')">
+            <i class="fas fa-plane"></i>
+            <span>My Trips</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="showSection('upcoming')">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Upcoming</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" onclick="showSection('completed')">
+            <i class="fas fa-check-circle"></i>
+            <span>Completed</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1 id="pageTitle">Dashboard Overview</h1>
+          <p id="pageSubtitle">Welcome back! Here's your travel summary</p>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <span id="userName">User</span>
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section id="overview" class="dashboard-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-plane"></i></div>
+            <div class="stat-content">
+              <h3 id="totalTrips">0</h3>
+              <p>Total Trips</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+            <div class="stat-content">
+              <h3 id="upcomingTrips">0</h3>
+              <p>Upcoming</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-content">
+              <h3 id="completedTrips">0</h3>
+              <p>Completed</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-content">
+              <h3 id="totalSpent">$0</h3>
+              <p>Total Spent</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <h2>Quick Actions</h2>
+          <div class="action-buttons">
+            <button class="action-btn primary" onclick="createNewTrip()">
+              <i class="fas fa-plus"></i>
+              <span>Create New Trip</span>
+            </button>
+            <button class="action-btn secondary" onclick="viewAllTrips()">
+              <i class="fas fa-list"></i>
+              <span>View All Trips</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="recent-trips">
+          <div class="section-header">
+            <h2>Recent Trips</h2>
+            <a href="#" onclick="showSection('trips')" class="view-all">View All</a>
+          </div>
+          <div class="trips-grid" id="recentTripsGrid">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+
+        <div class="upcoming-trips">
+          <div class="section-header">
+            <h2>Upcoming Trips</h2>
+            <a href="#" onclick="showSection('upcoming')" class="view-all">View All</a>
+          </div>
+          <div class="trips-grid" id="upcomingTripsGrid">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="trips" class="dashboard-section">
+        <div class="section-header">
+          <h2>All My Trips</h2>
+          <div class="trip-controls">
+            <select id="tripFilter" onchange="filterTrips()">
+              <option value="all">All Trips</option>
+              <option value="wishlist">Wishlist</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="completed">Completed</option>
+            </select>
+            <input type="text" id="tripSearch" placeholder="Search trips..." onkeyup="searchTrips()">
+          </div>
+        </div>
+        <div class="trips-grid" id="allTripsGrid">
+          <div class="loading-spinner"></div>
+        </div>
+      </section>
+
+      <section id="upcoming" class="dashboard-section">
+        <h2>Upcoming Trips</h2>
+        <div class="trips-grid" id="upcomingTripsGridFull">
+          <div class="loading-spinner"></div>
+        </div>
+      </section>
+
+      <section id="completed" class="dashboard-section">
+        <h2>Completed Trips</h2>
+        <div class="trips-grid" id="completedTripsGrid">
+          <div class="loading-spinner"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

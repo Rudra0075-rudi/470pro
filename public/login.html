@@ -47,7 +47,7 @@
           
           localStorage.setItem('user', JSON.stringify(result.user));
           console.log("Login successful, redirecting..."); // Debug
-          window.location.href = 'trips.html'; // Changed to your trips page
+          window.location.href = 'dashboard.html'; // Redirect to dashboard
         } else {
           throw new Error(result.message || "Login failed");
         }
