@@ -57,18 +57,18 @@
   }
 
   function parseDateSafe(dateString) {
-    // Handle cases where date might be already formatted or invalid
+    
     if (!dateString) return null;
     
-    // Try ISO format first
+    
     let date = new Date(dateString);
     if (!isNaN(date.getTime())) return date;
     
-    // Try removing timezone if present (common issue)
+  
     date = new Date(dateString.split('T')[0]);
     if (!isNaN(date.getTime())) return date;
     
-    // Try parsing as timestamp
+
     date = new Date(parseInt(dateString));
     if (!isNaN(date.getTime())) return date;
     
@@ -90,17 +90,17 @@
     showLoading();
     
     try {
-      // 1. Get user from localStorage
+
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       if (!user.id) {
         window.location.href = 'login.html';
         return;
       }
 
-      // 2. Fetch trips from backend
+      // Fetch trips from backend
       const response = await fetch(`http://localhost:3000/api/trips?userId=${encodeURIComponent(user.id)}`);
       
-      // 3. Handle response
+      //  Handle response
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.message || `Server error: ${response.status}`);
@@ -244,7 +244,7 @@
         <div class="detail-row"><strong>Destination:</strong> ${trip.destination}</div>
         <div class="detail-row"><strong>Dates:</strong> ${startDate} to ${endDate}</div>
         <div class="detail-row"><strong>Status:</strong> <span class="status-bubble ${trip.status}">${trip.status}</span></div>
-        <div class="detail-row"><strong>Budget:</strong> $${budgetSpent} / $${budgetTotal} (${budgetPercentage}%)</div>
+        <div class="detail-row"><strong>Budget:</strong> tk ${budgetSpent} / tk ${budgetTotal} (${budgetPercentage}%)</div>
         ${trip.notes ? `<div class="detail-row"><strong>Notes:</strong> ${trip.notes}</div>` : ''}
         ${trip.packingList && trip.packingList.length > 0 ? `
           <div class="packing-section">

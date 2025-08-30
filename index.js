@@ -1,30 +1,35 @@
 const express = require("express");
 
-const User = require('./models/model'); // Fixed the 'required' typo
+const User = require('./models/model');
 const cors = require('cors');
 const app = express();
 const connectDB = require('./db');
 require('dotenv').config();
-
+const photoRoutes = require('./routs/photos');
 
 const PORT = 3000;
 app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500'], // Add your client origin
+  origin: ['http://localhost:5500', 'http://127.0.0.1:5500'], 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 // Middleware
 app.use(express.json());
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
  
 
 
 // Connect to DB
 connectDB();
 //trips
-// Add these near your other routes
+
 const tripRoutes = require('./routs/trips.js');
 app.use('/api/trips', tripRoutes);
+app.use('/api/photos', photoRoutes); // Simple photo routes
+
+
 
 app.post('/signup', async (req, res) => {
     try {

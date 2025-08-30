@@ -2,204 +2,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌍 Create New Trip</title>
-  <link rel="stylesheet" href="/signup.css">
-  <style>
-    /* Additional styles specific to trip creation */
-    .date-fields {
-      display: flex;
-      gap: 10px;
-    }
-    .date-fields input {
-      flex: 1;
-    }
-    .status-options {
-      display: flex;
-      gap: 15px;
-      margin: 15px 0;
-    }
-    .status-option {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .packing-list {
-      margin-top: 15px;
-    }
-    .packing-item {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-    .add-item-btn {
-      width: auto;
-      padding: 8px 15px;
-      margin-top: 5px;
-    }
-    textarea {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      background-color: #f2f2f2;
-      font-size: 16px;
-      font-family: 'Poppins', sans-serif;
-      resize: vertical;
-      min-height: 80px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Create New Trip - Travel Journal</title>
+    <link rel="stylesheet" href="/signup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-    <h1> Plan New Trip</h1>
-    <form id="tripForm">
-      <input type="text" id="title" placeholder="Trip Title (e.g., Japan Adventure)" required>
-      <input type="text" id="destination" placeholder="Destination" required>
-      
-      <div class="date-fields">
-        <input type="date" id="startDate" required>
-        <input type="date" id="endDate" required>
-      </div>
-      
-      <div class="status-options">
-        <label class="status-option">Wishlist
-          <input type="radio" name="status" value="wishlist" checked>
-        </label>
-        <label class="status-option">Upcoming
-          <input type="radio" name="status" value="upcoming">
-        </label>
-        <label class="status-option">Completed
-          <input type="radio" name="status" value="completed">
-        </label>
-      </div>
-      
-      <div class="budget-fields">
-        <input type="number" id="totalBudget" placeholder="Total Budget ($)">
-        <input type="number" id="spentBudget" placeholder="Amount Spent ($)">
-      </div>
-      
-      <div class="packing-list">
-        <h3>🎒 Packing List</h3>
-        <div id="packingItemsContainer">
-          <div class="packing-item">
-            <input type="text" class="packing-item-input" placeholder="Item name">
-            <input type="checkbox" class="packed-checkbox">
-          </div>
-        </div>
-        <button type="button" class="add-item-btn" id="addPackingItem">+ Add Item</button>
-      </div>
-      
-      <textarea id="notes" placeholder="Additional notes..."></textarea>
-      
-      <button type="submit">Save Trip</button>
-    </form>
-  </div>
+    <div class="container">
+        <h1><i class="fas fa-plus-circle"></i> Plan New Trip</h1>
+        <form id="tripForm">
+            <div class="input-group">
+                <i class="fas fa-map-marker-alt"></i>
+                <input type="text" id="title" placeholder="Trip Title (e.g., Japan Adventure)" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-globe"></i>
+                <input type="text" id="destination" placeholder="Destination" required>
+            </div>
+            
+            <div class="date-fields">
+                <div class="input-group">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="date" id="startDate" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-calendar-check"></i>
+                    <input type="date" id="endDate" required>
+                </div>
+            </div>
+            
+            <div class="status-options">
+                <label class="status-option">
+                    <input type="radio" name="status" value="wishlist" checked>
+                    <i class="fas fa-heart"></i> Wishlist
+                </label>
+                <label class="status-option">
+                    <input type="radio" name="status" value="upcoming">
+                    <i class="fas fa-plane"></i> Upcoming
+                </label>
+                <label class="status-option">
+                    <input type="radio" name="status" value="completed">
+                    <i class="fas fa-check-circle"></i> Completed
+                </label>
+            </div>
+            
+            <div class="budget-fields">
+                <div class="input-group">
+                    <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                    <input type="number" id="totalBudget" placeholder="Total Budget (tk)">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-credit-card"></i>
+                    <input type="number" id="spentBudget" placeholder="Amount Spent (tk)">
+                </div>
+            </div>
+            
+            <div class="packing-list">
+                <h3><i class="fas fa-suitcase"></i> Packing List</h3>
+                <div id="packingItemsContainer">
+                    <div class="packing-item">
+                        <input type="text" class="packing-item-input" placeholder="Item name">
+                        <label class="packed-checkbox">
+                            <input type="checkbox" class="packed-checkbox">
+                            <span>Packed</span>
+                        </label>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" id="addPackingItem">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-sticky-note"></i>
+                <textarea id="notes" placeholder="Additional notes about your trip..."></textarea>
+            </div>
+            
+            <button type="submit" id="tripBtn">
+                <span class="btn-text">Create Trip</span>
+                <span class="btn-loading" style="display: none;">Creating Trip...</span>
+            </button>
+        </form>
+    </div>
 
-<script>
-  document.getElementById('addPackingItem').addEventListener('click', () => {
-    const container = document.getElementById('packingItemsContainer');
-    const newItem = document.createElement('div');
-    newItem.className = 'packing-item';
-    newItem.innerHTML = `
-      <input type="text" class="packing-item-input" placeholder="Item name">
-      <label>
-        <input type="checkbox" class="packed-checkbox">
-        Packed
-      </label>
-    `;
-    container.appendChild(newItem);
-  });
-
-  document.getElementById('tripForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // Get user from localStorage
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user || !user.id) {
-      alert('Please login first');
-      window.location.href = 'login.html';
-      return;
-    }
-
-    // Disable button during submission
-    const submitBtn = e.target.querySelector('button');
-    const originalBtnText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Saving...';
-
-    try {
-      // Prepare trip data
-      const tripData = {
-        title: document.getElementById('title').value.trim(),
-        destination: document.getElementById('destination').value.trim(),
-        startDate: document.getElementById('startDate').value,
-        endDate: document.getElementById('endDate').value,
-        status: document.querySelector('input[name="status"]:checked').value,
-        packingList: getPackingItems(),
-        budget: {
-          total: parseFloat(document.getElementById('totalBudget').value) || 0,
-          spent: parseFloat(document.getElementById('spentBudget').value) || 0
-        },
-        notes: document.getElementById('notes').value.trim(),
-        userId: user.id
-      };
-
-      // Validate required fields
-      if (!tripData.title || !tripData.destination || !tripData.startDate || !tripData.endDate) {
-        throw new Error('Please fill all required fields');
-      }
-
-      // Make API request
-      const response = await fetch('http://localhost:3000/api/trips', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(tripData),
-        mode: 'cors' // Explicitly enable CORS
-      });
-
-      // Handle response
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Server responded with status ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Trip created:', result);
-      alert('Trip saved successfully!');
-      window.location.href = 'trips.html';
-
-    } catch (error) {
-      console.error('Trip creation error:', error);
-      alert(`Failed to save trip: ${error.message}`);
-    } finally {
-      // Re-enable button
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalBtnText;
-    }
-  });
-
-  // Helper function to get packing items
-  function getPackingItems() {
-    const items = [];
-    document.querySelectorAll('.packing-item').forEach(item => {
-      const input = item.querySelector('.packing-item-input');
-      const checkbox = item.querySelector('.packed-checkbox');
-      if (input.value.trim()) {
-        items.push({
-          item: input.value.trim(),
-          packed: checkbox.checked
+    <script>
+        document.getElementById('addPackingItem').addEventListener('click', () => {
+            const container = document.getElementById('packingItemsContainer');
+            const newItem = document.createElement('div');
+            newItem.className = 'packing-item';
+            newItem.innerHTML = `
+                <input type="text" class="packing-item-input" placeholder="Item name">
+                <label class="packed-checkbox">
+                    <input type="checkbox" class="packed-checkbox">
+                    <span>Packed</span>
+                </label>
+                <button type="button" class="remove-item-btn" onclick="this.parentElement.remove()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            container.appendChild(newItem);
         });
-      }
-    });
-    return items;
-  }
-</script>
 
+        document.getElementById('tripForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('tripBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const btnLoading = btn.querySelector('.btn-loading');
+            
+            // Get user from localStorage
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || !user.id) {
+                alert('Please login first');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+
+            try {
+                // Prepare trip data
+                const tripData = {
+                    title: document.getElementById('title').value.trim(),
+                    destination: document.getElementById('destination').value.trim(),
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value,
+                    status: document.querySelector('input[name="status"]:checked').value,
+                    packingList: getPackingItems(),
+                    budget: {
+                        total: parseFloat(document.getElementById('totalBudget').value) || 0,
+                        spent: parseFloat(document.getElementById('spentBudget').value) || 0
+                    },
+                    notes: document.getElementById('notes').value.trim(),
+                    userId: user.id
+                };
+
+                // Validate required fields
+                if (!tripData.title || !tripData.destination || !tripData.startDate || !tripData.endDate) {
+                    throw new Error('Please fill all required fields');
+                }
+
+                // Make API request
+                const response = await fetch('http://localhost:3000/api/trips', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(tripData),
+                    mode: 'cors'
+                });
+
+                // Handle response
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `Server responded with status ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Trip created:', result);
+                
+                // Show success state
+                btn.style.background = 'var(--success)';
+                btnLoading.textContent = 'Trip Created!';
+                
+                setTimeout(() => {
+                    alert('Trip saved successfully!');
+                    window.location.href = 'trips.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('Trip creation error:', error);
+                
+                // Show error state
+                btn.style.background = 'var(--danger)';
+                btnLoading.textContent = 'Creation Failed';
+                
+                setTimeout(() => {
+                    alert(`Failed to save trip: ${error.message}`);
+                    
+                    // Reset button
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                    btn.style.background = '';
+                    btnText.style.display = 'inline';
+                    btnLoading.style.display = 'none';
+                }, 1000);
+            }
+        });
+
+        // Helper function to get packing items
+        function getPackingItems() {
+            const items = [];
+            document.querySelectorAll('.packing-item').forEach(item => {
+                const input = item.querySelector('.packing-item-input');
+                const checkbox = item.querySelector('.packed-checkbox');
+                if (input.value.trim()) {
+                    items.push({
+                        item: input.value.trim(),
+                        packed: checkbox.checked
+                    });
+                }
+            });
+            return items;
+        }
+    </script>
 </body>
 </html>

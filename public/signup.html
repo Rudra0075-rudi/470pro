@@ -1,53 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>signup</title>
-  <link rel="stylesheet" href="/signup.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌍 Sign Up - Travel Journal</title>
+    <link rel="stylesheet" href="/signup.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Join Us</h1>
-    <form id="signupForm">
-      <input name="name" id="name" placeholder="Your Name" required>
-      <input type="email" name="email" id="email" placeholder="Email Address" required>
-      <input type="password" name="password" id="password" placeholder="password" required>
-      <button type="submit">Sign Up</button>
-    </form>
-    <p class="login-link">Already have an account? <a href="login.html">Log in</a></p>
-  </div>
-<script>
-  document.getElementById('signupForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    try {
-      const response = await fetch('http://localhost:3000/signup', { 
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: document.getElementById('name').value,
-          email: document.getElementById('email').value,
-          password: document.getElementById('password').value
-        })
-      });
-      
-      const result = await response.json();
-      
-      if (response.ok) {
-        alert('Registration successful!');
-        document.getElementById('signupForm').reset();
-      } else {
-        alert(`Error: ${result.error || result.message}`);
-      }
-    } catch (error) {
-      alert('Failed to connect to server. Check console for details.');
-      console.error('Fetch Error:', error);
-    }
-  });
-</script>
-</body>
+    <div class="container">
+        <h1><i class="fas fa-user-plus"></i> Join Us</h1>
+        <form id="signupForm">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input name="name" id="name" placeholder="Your Full Name" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" name="email" id="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" id="password" placeholder="Password (min 6 characters)" required>
+            </div>
+            <button type="submit" id="signupBtn">
+                <span class="btn-text">Create Account</span>
+                <span class="btn-loading" style="display: none;">Creating Account...</span>
+            </button>
+        </form>
+        <p class="login-link">Already have an account? <a href="login.html">Log in</a></p>
+    </div>
 
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('signupBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const btnLoading = btn.querySelector('.btn-loading');
+            
+            // Show loading state
+            btn.disabled = true;
+            btn.classList.add('loading');
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            
+            try {
+                const response = await fetch('http://localhost:3000/signup', { 
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: document.getElementById('name').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        password: document.getElementById('password').value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Show success state
+                    btn.style.background = 'var(--success)';
+                    btnLoading.textContent = 'Account Created!';
+                    
+                    setTimeout(() => {
+                        alert('Registration successful! Please log in with your new account.');
+                        document.getElementById('signupForm').reset();
+                        
+                        // Reset button
+                        btn.disabled = false;
+                        btn.classList.remove('loading');
+                        btn.style.background = '';
+                        btnText.style.display = 'inline';
+                        btnLoading.style.display = 'none';
+                        
+                        // Redirect to login
+                        window.location.href = 'login.html';
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || result.message || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                
+                // Show error state
+                btn.style.background = 'var(--danger)';
+                btnLoading.textContent = 'Registration Failed';
+                
+                setTimeout(() => {
+                    alert('Failed to create account: ' + error.message);
+                    
+                    // Reset button
+                    btn.disabled = false;
+                    btn.classList.remove('loading');
+                    btn.style.background = '';
+                    btnText.style.display = 'inline';
+                    btnLoading.style.display = 'none';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
 </html>

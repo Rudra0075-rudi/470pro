@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌍 Travel Dashboard</title>
+  <title> Travel Dashboard</title>
   <link rel="stylesheet" href="dashboard.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="dashboard-container">
@@ -37,6 +37,12 @@
           <a href="#" onclick="showSection('completed')">
             <i class="fas fa-check-circle"></i>
             <span>Completed</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="photo.html">
+            <i class="fas fa-photo-film"></i>
+            <span>Memories</span>
           </a>
         </li>
       </ul>
@@ -88,9 +94,9 @@
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div class="stat-icon"><i class="fa-solid fa-bangladeshi-taka-sign"></i></div>
             <div class="stat-content">
-              <h3 id="totalSpent">$0</h3>
+              <h3 id="totalSpent">tk0</h3>
               <p>Total Spent</p>
             </div>
           </div>
@@ -162,9 +168,16 @@
           <div class="loading-spinner"></div>
         </div>
       </section>
-    </main>
-  </div>
-
+      <!-- Notification Popup -->
+      <!-- Notification Popup -->
+      <div id="nextTripNotification" class="notification-popup" style="display: none;">
+        <div class="notification-content">
+          <span class="close-notification" onclick="closeNotification()">×</span>
+          <h3>🛫 Upcoming Trip Reminder</h3>
+          <div id="notificationMessage"></div>
+          <button onclick="closeNotification()">Got it!</button>
+        </div>
+      </div>
   <script src="dashboard.js"></script>
 </body>
 </html>

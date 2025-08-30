@@ -25,6 +25,7 @@ async function loadDashboardData() {
     updateDashboardStats();
     loadOverviewSection();
     loadAllTripsSection();
+    notifyNextTrip(allTrips);
   } catch (error) {
     console.error('Error loading dashboard data:', error);
     alert('Failed to load dashboard data');
@@ -39,7 +40,7 @@ function updateDashboardStats() {
   document.getElementById('totalTrips').textContent = totalTrips;
   document.getElementById('upcomingTrips').textContent = upcomingTrips;
   document.getElementById('completedTrips').textContent = completedTrips;
-  document.getElementById('totalSpent').textContent = `$${totalSpent.toLocaleString()}`;
+  document.getElementById('totalSpent').textContent = `${totalSpent.toLocaleString()}tk`;
 }
 
 function loadOverviewSection() {
@@ -82,7 +83,7 @@ function createTripCard(trip) {
         <div class="status-badge ${trip.status}">${trip.status}</div>
       </div>
       <div class="card-dates"><span>${start}</span><span> to </span><span>${end}</span></div>
-      ${total > 0 ? `<div class="budget-info">Budget: $${spent} / $${total}</div>` : ''}
+      ${total > 0 ? `<div class="budget-info">Budget: tk${spent} / tk${total}</div>` : ''}
       <div class="card-actions">
         <button class="btn-view" onclick="event.stopPropagation(); viewTrip('${trip._id}')">View</button>
         <button class="btn-edit" onclick="event.stopPropagation(); editTrip('${trip._id}')">Edit</button>
@@ -132,6 +133,90 @@ function searchTrips() {
   }
   displayTripsGrid('allTripsGrid', list);
 }
+
+
+
+
+// Notification Functions
+function formatDateForDisplay(dateString) {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Date not available';
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long', 
+    day: 'numeric'
+  });
+}
+
+function showNotification(message) {
+  const notification = document.getElementById('nextTripNotification');
+  const messageElement = document.getElementById('notificationMessage');
+  
+  if (!notification || !messageElement) {
+    console.error('Notification elements not found');
+    return;
+  }
+  
+  messageElement.innerHTML = message;
+  notification.style.display = 'flex';
+  
+  setTimeout(closeNotification, 8000);
+}
+
+function closeNotification() {
+  const notification = document.getElementById('nextTripNotification');
+  if (notification) {
+    notification.style.display = 'none';
+  }
+}
+
+function getDaysUntilTrip(tripDate) {
+  const today = new Date();
+  const tripStart = new Date(tripDate);
+  
+  today.setHours(0, 0, 0, 0);
+  tripStart.setHours(0, 0, 0, 0);
+  
+  const timeDiff = tripStart - today;
+  const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  
+  return daysDiff;
+}
+
+function notifyNextTrip(trips) {
+  if (!trips || trips.length === 0) return;
+  
+  const today = new Date();
+  const upcomingTrips = trips.filter(trip => {
+    if (trip.status !== 'upcoming') return false;
+    if (!trip.startDate) return false;
+    
+    const tripDate = new Date(trip.startDate);
+    return tripDate >= today;
+  });
+  
+  if (upcomingTrips.length === 0) return;
+  
+  upcomingTrips.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  const nextTrip = upcomingTrips[0];
+  const daysUntilTrip = getDaysUntilTrip(nextTrip.startDate);
+  
+  if (daysUntilTrip <= 7) {
+    let message;
+    
+    if (daysUntilTrip === 0) {
+      message = `Your trip to <strong>${nextTrip.destination}</strong> starts <strong>today!</strong> `;
+    } else if (daysUntilTrip === 1) {
+      message = `Your trip to <strong>${nextTrip.destination}</strong> starts <strong>tomorrow!</strong> `;
+    } else {
+      message = `Your trip to <strong>${nextTrip.destination}</strong> starts in <strong>${daysUntilTrip} days</strong> on ${formatDateForDisplay(nextTrip.startDate)}.`;
+    }
+    
+    setTimeout(() => showNotification(message), 2000);
+  }
+}
+
 
 function createNewTrip(){ window.location.href = 'creat_trip.html'; }
 function viewAllTrips(){ showSection('trips'); }
