@@ -293,8 +293,13 @@ textarea::placeholder {
     }
     
     .packing-item {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .packing-item-input {
+        min-width: 120px;
     }
 }
 
@@ -350,22 +355,25 @@ textarea::placeholder {
 
 /* Remove Item Button */
 .remove-item-btn {
-    background: var(--danger);
-    color: var(--white);
+    background: transparent;
+    color: var(--danger);
     border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 10%;
     cursor: pointer;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: bottom;
+    justify-content: bottom;
     font-size: 12px;
     transition: var(--t);
+    flex-shrink: 0;
+    align-self: bottom;
+    margin-top: 12px;
 }
 
 .remove-item-btn:hover {
-    background: #d32f2f;
+    background: transparent;
     transform: scale(1.1);
 }
 
@@ -410,13 +418,19 @@ textarea::placeholder {
 }
 
 /* Enhanced Packing List */
+.packing-list h3 span {
+    font-size: 14px;
+    color: var(--gray);
+    font-weight: normal;
+}
+
 .packing-item {
     display: flex;
     gap: 12px;
     margin-bottom: 12px;
-    align-items: center;
+    align-items: bottom;
     background: var(--light);
-    padding: 12px;
+    padding: 1px;
     border-radius: var(--radius);
     border: 2px solid transparent;
     transition: var(--t);
@@ -427,22 +441,47 @@ textarea::placeholder {
     background: var(--white);
 }
 
+.packing-item-input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 15px;
+    border: 2px solid var(--gray-light);
+    border-radius: var(--radius);
+    font-size: 14px;
+    transition: var(--t);
+}
+
+.packing-item-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
 .packed-checkbox {
     display: flex;
     align-items: center;
-    gap: 8px;
-    cursor: pointer;
+    gap: 1px;
     font-size: 14px;
     color: var(--gray);
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: 8px;
 }
 
 .packed-checkbox input[type="checkbox"] {
     width: 18px;
     height: 18px;
     accent-color: var(--success);
+    cursor: pointer;
 }
 
-.packed-checkbox input[type="checkbox"]:checked + span {
+.packed-checkbox label {
+    cursor: pointer;
+    color: var(--gray);
+    transition: var(--t);
+}
+
+.packed-checkbox input[type="checkbox"]:checked + label {
     color: var(--success);
     font-weight: 600;
 }

@@ -60,14 +60,17 @@
             </div>
             
             <div class="packing-list">
-                <h3><i class="fas fa-suitcase"></i> Packing List</h3>
+                <h3><i class="fas fa-suitcase"></i> Packing List <span id="packingCount">(1 item)</span></h3>
                 <div id="packingItemsContainer">
                     <div class="packing-item">
                         <input type="text" class="packing-item-input" placeholder="Item name">
-                        <label class="packed-checkbox">
-                            <input type="checkbox" class="packed-checkbox">
-                            <span>Packed</span>
-                        </label>
+                        <div class="packed-checkbox">
+                            <input type="checkbox" id="packed1">
+                            <label for="packed1">Packed</label>
+                        </div>
+                        <button type="button" class="remove-item-btn" onclick="removePackingItem(this)" title="Remove item">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 </div>
                 <button type="button" class="add-item-btn" id="addPackingItem">
@@ -88,22 +91,70 @@
     </div>
 
     <script>
+        // Function to update packing count
+        function updatePackingCount() {
+            const container = document.getElementById('packingItemsContainer');
+            const items = container.querySelectorAll('.packing-item');
+            const countElement = document.getElementById('packingCount');
+            const count = items.length;
+            
+            if (count === 1) {
+                countElement.textContent = '(1 item)';
+            } else {
+                countElement.textContent = `(${count} items)`;
+            }
+        }
+
         document.getElementById('addPackingItem').addEventListener('click', () => {
             const container = document.getElementById('packingItemsContainer');
             const newItem = document.createElement('div');
             newItem.className = 'packing-item';
+            const itemId = 'packed' + Date.now();
             newItem.innerHTML = `
                 <input type="text" class="packing-item-input" placeholder="Item name">
-                <label class="packed-checkbox">
-                    <input type="checkbox" class="packed-checkbox">
-                    <span>Packed</span>
-                </label>
-                <button type="button" class="remove-item-btn" onclick="this.parentElement.remove()">
+                <div class="packed-checkbox">
+                    <input type="checkbox" id="${itemId}">
+                    <label for="${itemId}">Packed</label>
+                </div>
+                <button type="button" class="remove-item-btn" onclick="removePackingItem(this)" title="Remove item">
                     <i class="fas fa-trash"></i>
                 </button>
             `;
             container.appendChild(newItem);
+            updatePackingCount();
         });
+
+        // Function to remove packing item with validation
+        function removePackingItem(button) {
+            const container = document.getElementById('packingItemsContainer');
+            const items = container.querySelectorAll('.packing-item');
+            
+            // Don't remove if it's the last item
+            if (items.length > 1) {
+                // Add visual feedback before removing
+                const item = button.parentElement;
+                item.style.opacity = '0.5';
+                item.style.transform = 'scale(0.95)';
+                
+                setTimeout(() => {
+                    item.remove();
+                    updatePackingCount();
+                }, 150);
+            } else {
+                // If it's the last item, just clear the input instead of removing
+                const input = button.parentElement.querySelector('.packing-item-input');
+                const checkbox = button.parentElement.querySelector('.packed-checkbox input[type="checkbox"]');
+                input.value = '';
+                checkbox.checked = false;
+                
+                // Add visual feedback
+                const item = button.parentElement;
+                item.style.background = '#e8f5e8';
+                setTimeout(() => {
+                    item.style.background = '';
+                }, 500);
+            }
+        }
 
         document.getElementById('tripForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -202,7 +253,7 @@
             const items = [];
             document.querySelectorAll('.packing-item').forEach(item => {
                 const input = item.querySelector('.packing-item-input');
-                const checkbox = item.querySelector('.packed-checkbox');
+                const checkbox = item.querySelector('.packed-checkbox input[type="checkbox"]');
                 if (input.value.trim()) {
                     items.push({
                         item: input.value.trim(),

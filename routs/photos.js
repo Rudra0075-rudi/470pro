@@ -147,4 +147,56 @@ router.get('/test/hello', (req, res) => {
   res.json({ message: 'Photos API is working!' });
 });
 
+// Test route to list all photos (for debugging)
+router.get('/test/list', async (req, res) => {
+  try {
+    const photos = await Photo.find({}).limit(5);
+    res.json({ 
+      message: 'Photos list', 
+      count: photos.length,
+      photos: photos.map(p => ({ id: p._id, tripId: p.tripId, filename: p.filename, originalName: p.originalName }))
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to list photos', details: error.message });
+  }
+});
+
+// DOWNLOAD photo endpoint
+router.get('/download/:photoId', async (req, res) => {
+  try {
+    const { photoId } = req.params;
+    console.log('📥 Download request for photo:', photoId);
+    
+    // Find the photo in database
+    const photo = await Photo.findById(photoId);
+    if (!photo) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    // Construct file path
+    const filePath = path.join(__dirname, '../uploads', photo.tripId, photo.filename);
+    
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'Photo file not found' });
+    }
+
+    // Set proper headers for download
+    res.setHeader('Content-Disposition', `attachment; filename="${photo.originalName}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Send the file
+    res.sendFile(filePath);
+    
+    console.log('✅ Photo downloaded:', photo.originalName);
+
+  } catch (error) {
+    console.error('❌ Download error:', error);
+    res.status(500).json({ error: 'Failed to download photo', details: error.message });
+  }
+});
+
 module.exports = router;

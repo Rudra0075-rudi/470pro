@@ -70,7 +70,7 @@ async function loadPhotoCounts() {
             if (countResponse.ok) {
                 const data = await countResponse.json();
                 trip.photoCount = data.count;
-                console.log(`✅ Trip ${trip.title}: ${data.count} photos (from count endpoint)`);
+                console.log(` Trip ${trip.title}: ${data.count} photos (from count endpoint)`);
             } else {
                 // Fallback: load all photos and count them
                 console.log(`Count endpoint failed, trying fallback for ${trip._id}`);
@@ -79,10 +79,10 @@ async function loadPhotoCounts() {
                 if (photosResponse.ok) {
                     const photos = await photosResponse.json();
                     trip.photoCount = photos.length;
-                    console.log(`✅ Trip ${trip.title}: ${photos.length} photos (from photos endpoint)`);
+                    console.log(` Trip ${trip.title}: ${photos.length} photos (from photos endpoint)`);
                 } else {
                     trip.photoCount = 0;
-                    console.log(`❌ Trip ${trip.title}: 0 photos (both endpoints failed)`);
+                    console.log(` Trip ${trip.title}: 0 photos (both endpoints failed)`);
                 }
             }
         } catch (error) {
@@ -175,6 +175,11 @@ async function loadAndDisplayPhotos(tripId) {
         if (!response.ok) throw new Error(`Failed to load photos: ${response.status}`);
         
         const photos = await response.json();
+        
+            // Store photos globally for download function to access
+    window.currentPhotos = photos;
+    console.log('📸 Stored photos for download access:', photos.map(p => ({ id: p._id, name: p.originalName })));
+        
         displayPhotos(photos);
         
         // Update photo count in trip list
@@ -188,7 +193,7 @@ async function loadAndDisplayPhotos(tripId) {
 
 // Display photos in modal
 function displayPhotos(photos) {
-    console.log('🖼️ Displaying photos:', photos.length);
+    console.log(' Displaying photos:', photos.length);
     const photosGrid = document.getElementById('photosGrid');
     
     if (photos.length === 0) {
@@ -201,7 +206,9 @@ function displayPhotos(photos) {
         return;
     }
 
-    photosGrid.innerHTML = photos.map((photo, index) => `
+    photosGrid.innerHTML = photos.map((photo, index) => {
+        console.log(`📸 Rendering photo ${index}:`, { id: photo._id, name: photo.originalName, url: photo.url });
+        return `
         <div class="photo-item">
             <div class="photo-container">
                 <img src="${photo.url}" alt="${photo.originalName}" 
@@ -211,7 +218,7 @@ function displayPhotos(photos) {
                     <button class="btn-view-photo" onclick="viewPhoto('${photo.url}', '${photo.originalName}')">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-download-photo" onclick="downloadPhoto('${photo.url}', '${photo.originalName}')">
+                    <button class="btn-download-photo" onclick="downloadPhoto('${photo._id}', '${photo.originalName}')">
                         <i class="fas fa-download"></i>
                     </button>
                     <button class="btn-delete-photo" onclick="deletePhoto('${photo._id}', '${window.currentTripId}')">
@@ -224,12 +231,13 @@ function displayPhotos(photos) {
                 <span class="photo-date">${formatDate(photo.uploadDate)}</span>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // Upload photos to a trip
 function uploadToTrip(tripId) {
-    console.log('📤 Starting upload for trip:', tripId);
+    console.log(' Starting upload for trip:', tripId);
     
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -297,7 +305,7 @@ async function deletePhoto(photoId, tripId) {
             throw new Error(errorData.error || errorData.message || `Delete failed: ${response.status}`);
         }
 
-        console.log('✅ Photo deleted successfully');
+        console.log('Photo deleted successfully');
         
         // Refresh photo display
         await loadAndDisplayPhotos(tripId);
@@ -322,7 +330,16 @@ function updateTripPhotoCount(tripId, count) {
 
 // View a single photo in full screen
 function viewPhoto(photoUrl, photoName) {
-    console.log('👁️ Viewing photo:', photoName);
+    console.log(' Viewing photo:', photoName);
+    
+    // Find photo ID from current photos array
+    let photoId = null;
+    if (window.currentPhotos) {
+        const photo = window.currentPhotos.find(p => p.url === photoUrl);
+        if (photo) {
+            photoId = photo._id;
+        }
+    }
     
     // Create full-screen photo viewer
     const viewer = document.createElement('div');
@@ -332,7 +349,7 @@ function viewPhoto(photoUrl, photoName) {
             <div class="photo-viewer-header">
                 <h3>${photoName}</h3>
                 <div class="photo-viewer-actions">
-                    <button onclick="downloadPhoto('${photoUrl}', '${photoName}')" class="btn-download">
+                    <button onclick="downloadPhoto('${photoId}', '${photoName}')" class="btn-download">
                         <i class="fas fa-download"></i> Download
                     </button>
                     <button onclick="closePhotoViewer()" class="btn-close">
@@ -360,21 +377,41 @@ function closePhotoViewer() {
 }
 
 // Download a photo
-function downloadPhoto(photoUrl, photoName) {
-    console.log('📥 Downloading photo:', photoName);
+async function downloadPhoto(photoId, photoName) {
+    console.log('📥 Downloading photo:', photoName, 'with ID:', photoId);
     
-    // Create a temporary link to download the photo
-    const link = document.createElement('a');
-    link.href = photoUrl;
-    link.download = photoName;
-    link.target = '_blank';
-    
-    // Trigger download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    console.log('Download initiated for:', photoName);
+    try {
+        if (!photoId) {
+            throw new Error('Photo ID is required for download');
+        }
+        
+        // Use the new download endpoint
+        const downloadUrl = `http://localhost:3000/api/photos/download/${photoId}`;
+        console.log('Download URL:', downloadUrl);
+        
+        // Method 1: Try direct download
+        try {
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = photoName;
+            link.target = '_blank';
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            console.log('Download initiated for:', photoName);
+        } catch (error) {
+            // Method 2: Fallback - open in new tab
+            console.log('Direct download failed, opening in new tab...');
+            window.open(downloadUrl, '_blank');
+        }
+        
+    } catch (error) {
+        console.error(' Download error:', error);
+        alert('Failed to download photo: ' + error.message);
+    }
 }
 
 // Close photo modal
@@ -456,7 +493,7 @@ async function uploadFilesFromModal(files) {
         }
 
         const result = await response.json();
-        console.log('✅ Modal upload successful:', result);
+        console.log(' Modal upload successful:', result);
         
         alert(`Successfully uploaded ${result.photos.length} photos!`);
         
